@@ -1,0 +1,29 @@
+{
+    "name": "webit4me/doctrine-migration-version-checker",
+    "description": "A small library to interact with doctrine's configuration object to retrieve information about migration version",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.5",
+        "doctrine/migrations": "^1.5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.0.0",
+        "satooshi/php-coveralls": "^1.0.1"
+    },
+    "authors": [
+        {
+            "name": "Ali Bahman",
+            "email": "abn@webit4.me"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Webit4me\\DoctrineMigrationVersionChecker\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webit4me\\DoctrineMigrationVersionCheckerTest\\": "test/"
+        }
+    }
+}
