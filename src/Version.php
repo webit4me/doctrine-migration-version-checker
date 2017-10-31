@@ -15,8 +15,9 @@ class Version
      * @see defaault keys undert migrations_configuration, orm_default at
      *   https://github.com/doctrine/DoctrineORMModule/blob/master/config/module.config.php#L174
      */
-    const MIGRATION_DIR_NAME = 'directory';
+    const MIGRATION_DIR_KEY = 'directory';
     const MIGRATION_NAMESPACE_KEY = 'namespace';
+    const MIGRATION_TABLE_KEY = 'table';
 
     const ERR_MSG_MISSING_KEY = 'Expected key "%s" is missing in the doctrine\'s migration configuration!';
 
@@ -53,16 +54,7 @@ class Version
      */
     public function getCurrentVersion()
     {
-        $currentVersion = $this->getMigrationConfiguration()->getCurrentVersion();
-
-        // Migration version is 0, indicates no migration were ran
-        if (0 === $currentVersion || '0' === $currentVersion) {
-            return 0;
-        }
-
-        $availableVersions = $this->getMigrationConfiguration()->getAvailableVersions();
-
-        return (string)$availableVersions[$currentVersion - 1];
+        return $this->getMigrationConfiguration()->getCurrentVersion();
     }
 
     /**
@@ -86,6 +78,7 @@ class Version
             $dirName = $this->getMigrationDirectory();
 
             $configuration = new Configuration($this->conn);
+            $configuration->setMigrationsTableName($this->getMigrationTable());
             $configuration->setMigrationsNamespace($this->getMigrationNamespace());
             $configuration->setMigrationsDirectory($dirName);
             $configuration->registerMigrationsFromDirectory($dirName);
@@ -111,7 +104,16 @@ class Version
      */
     private function getMigrationDirectory()
     {
-        return $this->getMigrationProperty(self::MIGRATION_DIR_NAME);
+        return $this->getMigrationProperty(self::MIGRATION_DIR_KEY);
+    }
+
+    /**
+     * @return string
+     * @throws OutOfBoundsException
+     */
+    private function getMigrationTable()
+    {
+        return $this->getMigrationProperty(self::MIGRATION_TABLE_KEY);
     }
 
     /**
