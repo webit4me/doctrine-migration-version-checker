@@ -16,17 +16,13 @@ class VersionTest extends \PHPUnit_Framework_TestCase
     private $mockConfig = [
         'directory' => './Fixture/DBMigrations',
         'namespace' => 'Webit4me\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations',
+        'table' => 'tableName',
     ];
 
     /**
      * @var Connection
      */
     private $mockConnection;
-
-    /**
-     * @var int
-     */
-    private $mockedVersionNumber = 1;
 
     public function setUp()
     {
@@ -52,31 +48,8 @@ class VersionTest extends \PHPUnit_Framework_TestCase
         $mockConnection->expects($this->any())
             ->method('getDatabasePlatform')
             ->willReturn(new SqlitePlatform());
-        $mockConnection->expects($this->any())
-            ->method('fetchColumn')
-            ->willReturnCallback(function () {
-                return $this->mockedVersionNumber;
-            });
 
         $this->mockConnection = $mockConnection;
-    }
-
-    public function testVersion()
-    {
-        $service = new Version($this->mockConnection, $this->mockConfig);
-
-        foreach (
-            [
-                2 => '20171020101112',
-                1 => '20171020101111',
-                0 => '0',
-                3 => '20171020101113',
-                '0' => '0',
-            ] as $versionNumber => $version) {
-
-            $this->setExpectedCurrentVersion($versionNumber);
-            $this->assertEquals($version, $service->getCurrentVersion());
-        }
     }
 
     /**
@@ -113,7 +86,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
                 'expectedException' => new OutOfBoundsException(
                     sprintf(
                         Version::ERR_MSG_MISSING_KEY,
-                        Version::MIGRATION_DIR_NAME
+                        Version::MIGRATION_DIR_KEY
                     )
                 ),
             ],
@@ -121,11 +94,12 @@ class VersionTest extends \PHPUnit_Framework_TestCase
                 'incorrectConfig' => [
                     'folder' => 'MembraneDoctrineMigrations',
                     'namespace' => 'Migrations',
+                    'table' => 'TableName',
                 ],
                 'expectedException' => new OutOfBoundsException(
                     sprintf(
                         Version::ERR_MSG_MISSING_KEY,
-                        Version::MIGRATION_DIR_NAME
+                        Version::MIGRATION_DIR_KEY
                     )
                 ),
             ],
@@ -133,6 +107,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
                 'incorrectConfig' => [
                     'directory' => 'MembraneDoctrineMigrations',
                     'domain' => 'Migrations',
+                    'table' => 'TableName',
                 ],
                 'expectedException' => new OutOfBoundsException(
                     sprintf(
@@ -142,17 +117,22 @@ class VersionTest extends \PHPUnit_Framework_TestCase
                 ),
             ],
             [
+                'incorrectConfig' => [
+                    'directory' => 'MembraneDoctrineMigrations',
+                    'namespace' => 'Migrations',
+                    'storage' => 'TableName',
+                ],
+                'expectedException' => new OutOfBoundsException(
+                    sprintf(
+                        Version::ERR_MSG_MISSING_KEY,
+                        Version::MIGRATION_TABLE_KEY
+                    )
+                ),
+            ],
+            [
                 'incorrectConfig' => $this->mockConfig,
                 'expectedException' => null,
             ],
         ];
-    }
-
-    /**
-     * @param int $mockedVersionNumber
-     */
-    private function setExpectedCurrentVersion($mockedVersionNumber)
-    {
-        $this->mockedVersionNumber = $mockedVersionNumber;
     }
 }
