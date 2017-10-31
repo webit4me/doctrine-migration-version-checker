@@ -53,9 +53,16 @@ class Version
      */
     public function getCurrentVersion()
     {
-        $availableVersions = $this->getMigrationConfiguration()->getAvailableVersions();
         $currentVersion = $this->getMigrationConfiguration()->getCurrentVersion();
-        return (string)$availableVersions[$currentVersion];
+
+        // Migration version is 0, indicates no migration were ran
+        if (0 === $currentVersion || '0' === $currentVersion) {
+            return 0;
+        }
+
+        $availableVersions = $this->getMigrationConfiguration()->getAvailableVersions();
+
+        return (string)$availableVersions[$currentVersion - 1];
     }
 
     /**
