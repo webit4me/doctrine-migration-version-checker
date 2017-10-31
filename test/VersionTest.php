@@ -67,9 +67,11 @@ class VersionTest extends \PHPUnit_Framework_TestCase
 
         foreach (
             [
-                1 => '20171020101112',
-                0 => '20171020101111',
-                2 => '20171020101113',
+                2 => '20171020101112',
+                1 => '20171020101111',
+                0 => '0',
+                3 => '20171020101113',
+                '0' => '0',
             ] as $versionNumber => $version) {
 
             $this->setExpectedCurrentVersion($versionNumber);
