@@ -1,5 +1,5 @@
 {
-    "name": "ministryofjustice/doctrine-migration-version-checker",
+    "name": "webit4me/doctrine-migration-version-checker",
     "description": "A small library to interact with doctrine's configuration object to retrieve information about migration version",
     "license": "MIT",
     "require": {
