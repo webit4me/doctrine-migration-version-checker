@@ -18,12 +18,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "minitryofjustice\\DoctrineMigrationVersionChecker\\": "src/"
+            "Minitryofjustice\\DoctrineMigrationVersionChecker\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "minitryofjustice\\DoctrineMigrationVersionCheckerTest\\": "test/"
+            "Minitryofjustice\\DoctrineMigrationVersionCheckerTest\\": "test/"
         }
     }
 }
