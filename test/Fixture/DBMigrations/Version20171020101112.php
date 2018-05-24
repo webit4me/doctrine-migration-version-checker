@@ -1,6 +1,6 @@
 <?php
 
-namespace Webit4me\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations;
+namespace minitryofjustice\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;

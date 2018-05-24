@@ -1,5 +1,5 @@
 {
-    "name": "webit4me/doctrine-migration-version-checker",
+    "name": "minitryofjustice/doctrine-migration-version-checker",
     "description": "A small library to interact with doctrine's configuration object to retrieve information about migration version",
     "license": "MIT",
     "require": {
@@ -18,12 +18,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Webit4me\\DoctrineMigrationVersionChecker\\": "src/"
+            "minitryofjustice\\DoctrineMigrationVersionChecker\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Webit4me\\DoctrineMigrationVersionCheckerTest\\": "test/"
+            "minitryofjustice\\DoctrineMigrationVersionCheckerTest\\": "test/"
         }
     }
 }
