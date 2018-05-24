@@ -1,12 +1,12 @@
 <?php
 
-namespace Webit4me\DoctrineMigrationVersionChecker;
+namespace Minitryofjustice\DoctrineMigrationVersionChecker;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Migrations\Configuration\Configuration;
-use Webit4me\DoctrineMigrationVersionChecker\Exception\Exception;
-use Webit4me\DoctrineMigrationVersionChecker\Exception\InvalidArgumentException;
-use Webit4me\DoctrineMigrationVersionChecker\Exception\OutOfBoundsException;
+use Minitryofjustice\DoctrineMigrationVersionChecker\Exception\Exception;
+use Minitryofjustice\DoctrineMigrationVersionChecker\Exception\InvalidArgumentException;
+use Minitryofjustice\DoctrineMigrationVersionChecker\Exception\OutOfBoundsException;
 
 class Version
 {
