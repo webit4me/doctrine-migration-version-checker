@@ -1,6 +1,6 @@
 <?php
 
-namespace Webit4me\DoctrineMigrationVersionChecker\Exception;
+namespace minitryofjustice\DoctrineMigrationVersionChecker\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {

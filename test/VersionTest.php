@@ -1,12 +1,12 @@
 <?php
 
-namespace Webit4me\DoctrineMigrationVersionCheckerTest;
+namespace minitryofjustice\DoctrineMigrationVersionCheckerTest;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Webit4me\DoctrineMigrationVersionChecker\Exception\OutOfBoundsException;
-use Webit4me\DoctrineMigrationVersionChecker\Version;
+use minitryofjustice\DoctrineMigrationVersionChecker\Exception\OutOfBoundsException;
+use minitryofjustice\DoctrineMigrationVersionChecker\Version;
 
 class VersionTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +15,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
      */
     private $mockConfig = [
         'directory' => './Fixture/DBMigrations',
-        'namespace' => 'Webit4me\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations',
+        'namespace' => 'minitryofjustice\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations',
         'table' => 'tableName',
     ];
 
