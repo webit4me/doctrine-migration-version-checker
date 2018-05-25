@@ -1,6 +1,6 @@
 <?php
 
-namespace Minitryofjustice\DoctrineMigrationVersionChecker\Exception;
+namespace Ministryofjustice\DoctrineMigrationVersionChecker\Exception;
 
 class OutOfBoundsException extends \OutOfBoundsException
 {

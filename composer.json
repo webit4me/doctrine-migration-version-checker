@@ -1,5 +1,5 @@
 {
-    "name": "minitryofjustice/doctrine-migration-version-checker",
+    "name": "ministryofjustice/doctrine-migration-version-checker",
     "description": "A small library to interact with doctrine's configuration object to retrieve information about migration version",
     "license": "MIT",
     "require": {
@@ -18,12 +18,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Minitryofjustice\\DoctrineMigrationVersionChecker\\": "src/"
+            "Ministryofjustice\\DoctrineMigrationVersionChecker\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Minitryofjustice\\DoctrineMigrationVersionCheckerTest\\": "test/"
+            "Ministryofjustice\\DoctrineMigrationVersionCheckerTest\\": "test/"
         }
     }
 }
