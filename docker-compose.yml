@@ -1,0 +1,15 @@
+---
+version: "3.6"
+
+services:
+  composer:
+    image: composer
+    volumes:
+      - ~/.composer:/tmp
+      - ${PWD}:/app
+    command: ["install"]
+
+  unit-test:
+    image: doctrine-migration-version-checker:${BUILD_TAG:-latest}
+    build: .
+    command: ./vendor/bin/phpunit -c ./phpunit.xml.dist -v

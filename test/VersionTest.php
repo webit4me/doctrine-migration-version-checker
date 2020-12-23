@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ministryofjustice\DoctrineMigrationVersionCheckerTest;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Ministryofjustice\DoctrineMigrationVersionChecker\Exception\OutOfBoundsException;
+use Exception;
 use Ministryofjustice\DoctrineMigrationVersionChecker\Version;
+use OutOfBoundsException;
+use PHPUnit\Framework\TestCase;
 
-class VersionTest extends \PHPUnit_Framework_TestCase
+class VersionTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    private $mockConfig = [
+    private array $mockConfig = [
         'directory' => './Fixture/DBMigrations',
         'namespace' => 'Ministryofjustice\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations',
         'table' => 'tableName',
@@ -24,61 +25,56 @@ class VersionTest extends \PHPUnit_Framework_TestCase
      */
     private $mockConnection;
 
-    public function setUp()
+    public function setUp(): void
+    {
+        $this->mockConnection = $this->createMock(Connection::class);
+    }
+
+    public function test_getCurrentVersion_returns_latest_version(): void
     {
         chdir(__DIR__);
 
-        $mockConnection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
-
-        $mockAbstractSchemaManager = $this->getMockForAbstractClass(
-            AbstractSchemaManager::class,
-            [$mockConnection],
-            '',
-            true,
-            true,
-            true,
-            ['listTableNames', 'createTable']
-        );
-
-        $mockAbstractSchemaManager->expects($this->any())->method('listTableNames')->willReturn([]);
-
-        $mockConnection->expects($this->any())
-            ->method('getSchemaManager')
-            ->willReturn($mockAbstractSchemaManager);
-        $mockConnection->expects($this->any())
+        $this->mockConnection->expects(self::atLeastOnce())
             ->method('getDatabasePlatform')
             ->willReturn(new SqlitePlatform());
 
-        $this->mockConnection = $mockConnection;
+        $this->mockConnection->expects(self::atLeastOnce())
+            ->method('getSchemaManager')
+            ->willReturn(new TestableSchemaManager($this->mockConnection));
+
+        $this->mockConnection->expects(self::atLeastOnce())
+            ->method('connect')
+            ->willReturn(false);
+
+        $service = new Version($this->mockConnection, $this->mockConfig);
+        $result = $service->getCurrentVersion();
+
+        self::assertEquals('', $result);
     }
 
     /**
      * @param array $config
-     * @param \Exception|null $expectedException
+     * @param Exception|null $expectedException
      *
      * @dataProvider incorrectConfigDataProvider
      */
-    public function testExceptionOnMissingConfigItems(array $config, \Exception $expectedException = null)
+    public function test_getCurrentVersion_throws_exceptions_when_missing_config(array $config, Exception $expectedException = null)
     {
         if (!is_null($expectedException)) {
-
-            $this->setExpectedException(
-                get_class($expectedException),
-                $expectedException->getMessage(),
-                $expectedException->getCode()
-            );
+            $this->expectException(get_class($expectedException));
+            $this->expectExceptionMessage($expectedException->getMessage());
         }
 
         $service = new Version($this->mockConnection, $config);
         $service->getCurrentVersion();
 
-        $this->assertInstanceOf(Version::class, $service);
+        self::assertInstanceOf(Version::class, $service);
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
-    public function incorrectConfigDataProvider()
+    public function incorrectConfigDataProvider(): array
     {
         return [
             [
@@ -128,10 +124,6 @@ class VersionTest extends \PHPUnit_Framework_TestCase
                         Version::MIGRATION_TABLE_KEY
                     )
                 ),
-            ],
-            [
-                'incorrectConfig' => $this->mockConfig,
-                'expectedException' => null,
             ],
         ];
     }

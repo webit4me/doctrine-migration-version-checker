@@ -8,9 +8,7 @@ cache:
         - $HOME/.composer/cache
 
 php:
-    - 7.0
-    - 7.1
-    - hhvm
+    - 7.4
 
 services:
 
@@ -24,9 +22,3 @@ script:
 
 after_script:
     - bash <(curl -s https://codecov.io/bash) -s .build/logs
-
-matrix:
-    fast_finish: true
-    allow_failures:
-        - php: hhvm
-        - php: 7.0

@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ministryofjustice\DoctrineMigrationVersionChecker;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Migrations\Configuration\Configuration;
-use Ministryofjustice\DoctrineMigrationVersionChecker\Exception\Exception;
-use Ministryofjustice\DoctrineMigrationVersionChecker\Exception\InvalidArgumentException;
-use Ministryofjustice\DoctrineMigrationVersionChecker\Exception\OutOfBoundsException;
+use Doctrine\Migrations\Configuration\Configuration;
+use InvalidArgumentException;
+use OutOfBoundsException;
 
 class Version
 {
-
     /**
      * @see defaault keys undert migrations_configuration, orm_default at
      *   https://github.com/doctrine/DoctrineORMModule/blob/master/config/module.config.php#L174
@@ -21,25 +21,19 @@ class Version
 
     const ERR_MSG_MISSING_KEY = 'Expected key "%s" is missing in the doctrine\'s migration configuration!';
 
-    /**
-     * @var Connection
-     */
-    private $conn;
+    private Connection $conn;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
-    private $doctrineMigrationConfig;
+    private array $doctrineMigrationConfig;
 
-    /**
-     * @var Configuration
-     */
-    private $migrationConfiguration;
+    private ?Configuration $migrationConfiguration;
 
     /**
      * DBMigrationVersionService constructor.
      * @param Connection $connection
-     * @param array $doctrineMigrationConfig
+     * @param array<mixed> $doctrineMigrationConfig
      *   in a usual setup comes from 'doctrine' => [ 'migrations_configuration' => ['orm_default' => []]
      * @throws InvalidArgumentException
      */
@@ -47,20 +41,15 @@ class Version
     {
         $this->conn = $connection;
         $this->doctrineMigrationConfig = $doctrineMigrationConfig;
+        $this->migrationConfiguration = null;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrentVersion()
+    public function getCurrentVersion(): string
     {
         return $this->getMigrationConfiguration()->getCurrentVersion();
     }
 
-    /**
-     * @return Configuration
-     */
-    private function getMigrationConfiguration()
+    private function getMigrationConfiguration(): Configuration
     {
         if (is_null($this->migrationConfiguration)) {
             $this->initMigrationConfiguration();
@@ -69,31 +58,26 @@ class Version
         return $this->migrationConfiguration;
     }
 
-    /**
-     * @throws Exception
-     */
-    private function initMigrationConfiguration()
+    private function initMigrationConfiguration(): void
     {
-        try {
-            $dirName = $this->getMigrationDirectory();
+        $dirName = $this->getMigrationDirectory();
+        $migrationTable = $this->getMigrationTable();
+        $migrationNamespace = $this->getMigrationNamespace();
 
-            $configuration = new Configuration($this->conn);
-            $configuration->setMigrationsTableName($this->getMigrationTable());
-            $configuration->setMigrationsNamespace($this->getMigrationNamespace());
-            $configuration->setMigrationsDirectory($dirName);
-            $configuration->registerMigrationsFromDirectory($dirName);
+        $configuration = new Configuration($this->conn);
+        $configuration->setMigrationsTableName($migrationTable);
+        $configuration->setMigrationsNamespace($migrationNamespace);
+        $configuration->setMigrationsDirectory($dirName);
+        $configuration->registerMigrationsFromDirectory($dirName);
 
-            $this->migrationConfiguration = $configuration;
-        } catch (Exception $e) {
-            throw $e;
-        }
+        $this->migrationConfiguration = $configuration;
     }
 
     /**
      * @return string
      * @throws OutOfBoundsException
      */
-    private function getMigrationNamespace()
+    private function getMigrationNamespace(): string
     {
         return $this->getMigrationProperty(self::MIGRATION_NAMESPACE_KEY);
     }
@@ -102,7 +86,7 @@ class Version
      * @return string
      * @throws OutOfBoundsException
      */
-    private function getMigrationDirectory()
+    private function getMigrationDirectory(): string
     {
         return $this->getMigrationProperty(self::MIGRATION_DIR_KEY);
     }
@@ -111,7 +95,7 @@ class Version
      * @return string
      * @throws OutOfBoundsException
      */
-    private function getMigrationTable()
+    private function getMigrationTable(): string
     {
         return $this->getMigrationProperty(self::MIGRATION_TABLE_KEY);
     }
@@ -121,12 +105,10 @@ class Version
      * @return string
      * @throws OutOfBoundsException
      */
-    private function getMigrationProperty($key)
+    private function getMigrationProperty($key): string
     {
         if (!key_exists($key, $this->doctrineMigrationConfig)) {
-            throw new OutOfBoundsException(sprintf(
-                self::ERR_MSG_MISSING_KEY, $key
-            ));
+            throw new OutOfBoundsException(sprintf(self::ERR_MSG_MISSING_KEY, $key));
         }
 
         return $this->doctrineMigrationConfig[$key];
