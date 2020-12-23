@@ -1,5 +1,4 @@
 FROM composer as composer
-RUN composer global require hirak/prestissimo --no-plugins --no-scripts
 COPY composer.json composer.json
 COPY composer.lock composer.lock
 RUN composer install --prefer-dist --no-interaction --no-scripts
