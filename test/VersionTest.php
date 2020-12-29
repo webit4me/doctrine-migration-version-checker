@@ -6,7 +6,6 @@ namespace Ministryofjustice\DoctrineMigrationVersionCheckerTest;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Exception;
 use Ministryofjustice\DoctrineMigrationVersionChecker\Version;
 use OutOfBoundsException;
@@ -15,9 +14,12 @@ use PHPUnit\Framework\TestCase;
 class VersionTest extends TestCase
 {
     private array $mockConfig = [
-        'directory' => './Fixture/DBMigrations',
-        'namespace' => 'Ministryofjustice\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations',
-        'table' => 'tableName',
+        'table_storage' => [
+            'table_name' => 'tableName',
+        ],
+        'migrations_paths' => [
+            'Ministryofjustice\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations' => './Fixture/DBMigrations',
+        ],
     ];
 
     /**
@@ -42,14 +44,10 @@ class VersionTest extends TestCase
             ->method('getSchemaManager')
             ->willReturn(new TestableSchemaManager($this->mockConnection));
 
-        $this->mockConnection->expects(self::atLeastOnce())
-            ->method('connect')
-            ->willReturn(false);
-
         $service = new Version($this->mockConnection, $this->mockConfig);
         $result = $service->getCurrentVersion();
 
-        self::assertEquals('', $result);
+        self::assertEquals('0', $result);
     }
 
     /**
@@ -78,50 +76,43 @@ class VersionTest extends TestCase
     {
         return [
             [
-                'incorrectConfig' => [],
-                'expectedException' => new OutOfBoundsException(
-                    sprintf(
-                        Version::ERR_MSG_MISSING_KEY,
-                        Version::MIGRATION_DIR_KEY
-                    )
-                ),
-            ],
-            [
                 'incorrectConfig' => [
-                    'folder' => 'MembraneDoctrineMigrations',
-                    'namespace' => 'Migrations',
-                    'table' => 'TableName',
+                    'migrations_paths' => [
+                        'Ministryofjustice\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations' => './Fixture/DBMigrations',
+                    ],
                 ],
                 'expectedException' => new OutOfBoundsException(
                     sprintf(
                         Version::ERR_MSG_MISSING_KEY,
-                        Version::MIGRATION_DIR_KEY
+                        Version::TABLE_CONFIG_SECTION_KEY
                     )
                 ),
             ],
             [
                 'incorrectConfig' => [
-                    'directory' => 'MembraneDoctrineMigrations',
-                    'domain' => 'Migrations',
-                    'table' => 'TableName',
-                ],
-                'expectedException' => new OutOfBoundsException(
-                    sprintf(
-                        Version::ERR_MSG_MISSING_KEY,
-                        Version::MIGRATION_NAMESPACE_KEY
-                    )
-                ),
-            ],
-            [
-                'incorrectConfig' => [
-                    'directory' => 'MembraneDoctrineMigrations',
-                    'namespace' => 'Migrations',
-                    'storage' => 'TableName',
+                    'table_storage' => [
+                    ],
+                    'migrations_paths' => [
+                        'Ministryofjustice\DoctrineMigrationVersionCheckerTest\Fixture\DBMigrations' => './Fixture/DBMigrations',
+                    ],
                 ],
                 'expectedException' => new OutOfBoundsException(
                     sprintf(
                         Version::ERR_MSG_MISSING_KEY,
                         Version::MIGRATION_TABLE_KEY
+                    )
+                ),
+            ],
+            [
+                'incorrectConfig' => [
+                    'table_storage' => [
+                        'table_name' => 'tableName',
+                    ],
+                ],
+                'expectedException' => new OutOfBoundsException(
+                    sprintf(
+                        Version::ERR_MSG_MISSING_KEY,
+                        Version::MIGRATION_PATHS_SECTION_KEY
                     )
                 ),
             ],
